@@ -1,9 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/doktorChopper/ek-service/internal/config"
+	"github.com/doktorChopper/ek-service/internal/server"
+)
 
 
 func main() {
 
-    fmt.Println("Hellow, World!")
+    cfg := config.New()
+
+    fmt.Println("start app...")
+    srv := server.NewServer(cfg)
+    srv.RunServer()
 }
