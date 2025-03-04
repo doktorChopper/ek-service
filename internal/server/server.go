@@ -24,6 +24,7 @@ func (s *Server) RunServer() {
     mux := http.NewServeMux()
 
     mux.HandleFunc("/home", handlers.Home)
+    mux.HandleFunc("/about", handlers.About)
     
     srv := http.Server{
         Addr: s.cfg.Server.Addr + s.cfg.Server.Port,
