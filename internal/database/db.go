@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/doktorChopper/ek-service/internal/config"
+    _ "github.com/lib/pq"
 )
 
 

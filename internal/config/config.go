@@ -36,6 +36,7 @@ type DatabaseConfig struct {
 func New() *Config {
 
     return &Config{
-        Server: defaultServerConfig,
+        Server:     defaultServerConfig,
+        Database:   defaultDatabaseConfig,
     }
 }
