@@ -1,0 +1,15 @@
+{{template "base" .}}
+{{define "title"}}Chopper{{end}}
+{{define "main"}}
+<h2>Добавить </h2>
+<form method='POST' action="/user/create/submit">
+    <label>User name</label><br>
+    <input type='text' name='name'/><br><br>
+    <label>User surname</label><br>
+    <input type='text' name='surname'/><br><br>
+    <label>Email</label><br>
+    <input type='text' name='email'/><br><br>
+    <input type='submit' name='отправить'/><br><br>
+</form>
+{{end}}
+

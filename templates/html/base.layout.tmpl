@@ -1,0 +1,29 @@
+{{define "base"}}
+<!DOCTYPE HTML>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>{{template "title" .}} - Social-Network</title>
+        <link rel='stylesheet' href='/static/css/base.css'>
+        <link rel='stylesheet' href='https://fonts.google.com/share?selection.family=Orbitron:wght@400..900|Sour+Gummy:ital,wght@0,100..900;1,100..900'>
+    </head>
+    <body>
+        <header>
+            <h1> <a href='/'>Social-Network</a></h1>
+        </header>
+        <nav>
+            <a href='/'>Домашняя страница</a>
+        </nav>
+        <main>
+            {{template "main" .}}
+            <p class='chopper'>
+                <a class='github-href-chopper' href='https://github.com/doktorChopper'>DoktorChopper</a>
+            </p>
+            <p class='chopper'>
+                <img src='https://img.artpal.com/523782/30-23-7-18-20-37-38m.jpg'/ alt='Доктор Чоппер'>
+            </p>
+        </main>
+    </body>
+</html>
+{{end}}
+

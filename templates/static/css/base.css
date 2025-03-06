@@ -1,0 +1,37 @@
+* {
+    font-family: "Ubuntu Mono", monospace;
+}
+
+
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}
+
+p {
+  font-size: 20px;
+  color: white;
+}
+
+.chopper {
+    text-align: center;    
+}
+
+.github-href-chopper {
+    font-size: 32px;
+    color: #00ff00;
+    text-decoration: none;
+    text-align: center;    
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.github-href-chopper:hover {
+    transform: scale(1.2);
+}
+
