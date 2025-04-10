@@ -6,4 +6,12 @@ type User struct {
     Surname         string      `json:"surname"`
     Email           string      `json:"email"`
     // Films           []*Film     `json:"fimls"`
+    // Login           string      `json:"login"`
+    // HashedPassword  string      `json:"hashed_password"`
 }
+
+type UserCred struct {
+    Login           string      `json:"login"`
+    Password        string      `json:"password"`
+}
+

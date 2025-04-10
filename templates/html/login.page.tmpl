@@ -1,0 +1,13 @@
+{{template "base" .}}
+{{define "title"}}Chopper{{end}}
+{{define "main"}}
+<h2>Добавить </h2>
+<form method='POST' action="/login/submit">
+    <label>Login</label><br>
+    <input type='text' name='login'/><br><br>
+    <label>Password</label><br>
+    <input type='text' name='password'/><br><br>
+    <input type='submit' name='отправить'/><br><br>
+</form>
+{{end}}
+

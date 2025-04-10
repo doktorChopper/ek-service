@@ -1,0 +1,16 @@
+{{template "base" .}}
+{{define "title"}}Chopper{{end}}
+{{define "main"}}
+<h2>Добавить </h2>
+<form method='POST' action="/user/create/submit">
+    <label>Film name</label><br>
+    <input type='text' name='name'/><br><br>
+    <label>Film genre</label><br>
+    <input type='text' name='genre'/><br><br>
+    <label>Film review</label><br>
+    <input type='text' name='review'/><br><br>
+    <input type='submit' name='отправить'/><br><br>
+</form>
+{{end}}
+
+

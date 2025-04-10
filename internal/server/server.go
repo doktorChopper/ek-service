@@ -6,7 +6,7 @@ import (
 
 	"github.com/doktorChopper/ek-service/internal/config"
 	"github.com/doktorChopper/ek-service/internal/database"
-	handlerUser "github.com/doktorChopper/ek-service/internal/handlers/users"
+	"github.com/doktorChopper/ek-service/internal/routes"
 )
 
 type Server struct {
@@ -30,8 +30,7 @@ func (s *Server) RunServer() {
         return
     }
 
-    handlerUser.AddRouters(mux, db)
-
+    routes.AddRouters(mux, db)
 
     srv := http.Server{
         Addr: s.cfg.Server.Addr + s.cfg.Server.Port,

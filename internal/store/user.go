@@ -1,7 +1,8 @@
-package users
+package store
 
 import (
 	"database/sql"
+	// "log"
 
 	"github.com/doktorChopper/ek-service/internal/models"
 )
@@ -10,7 +11,7 @@ type UserStorer struct {
     db *sql.DB
 }
 
-func New(db *sql.DB) UserStorer {
+func NewUser(db *sql.DB) UserStorer {
     return UserStorer{
         db: db,
     }
@@ -23,7 +24,7 @@ func (u *UserStorer) Get(id int) ([]models.User, error) {
         err     error
     )
 
-    stmt := `SELECT * FROM users WHERE id = $1`
+    stmt := `SELECT id, name, surname, email FROM users WHERE id = $1`
 
     rows, err = u.db.Query(stmt, id)
 
@@ -35,7 +36,13 @@ func (u *UserStorer) Get(id int) ([]models.User, error) {
 
     for rows.Next() {
         var u models.User
-        _ = rows.Scan(&u.ID, &u.Name, &u.Surname, &u.Email)
+
+        _ = rows.Scan(
+            &u.ID,
+            &u.Name,
+            &u.Surname,
+            &u.Email)
+
         users = append(users, u)
     }
     
@@ -59,3 +66,4 @@ func (u *UserStorer) Create(user models.User) (models.User, error) {
 
     return user, nil
 }
+
