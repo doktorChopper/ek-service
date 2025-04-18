@@ -17,6 +17,28 @@ func NewUser(db *sql.DB) UserStorer {
     }
 } 
 
+func (u *UserStorer) ComparePassword(password, email string) bool {
+
+    var checkPassword string
+
+    stmt := `SELECT hashed_password FROM users WHERE email = $1` 
+
+    row := u.db.QueryRow(stmt, email)
+    row.Scan(&checkPassword)
+
+    if len(checkPassword) != len(password) {
+        return false
+    }
+
+    for i := range checkPassword {
+        if checkPassword[i] != password[i] {
+            return false
+        } 
+    }
+
+    return true
+}
+
 func (u *UserStorer) Get(id int) ([]models.User, error) {
     
     var (
@@ -52,10 +74,10 @@ func (u *UserStorer) Get(id int) ([]models.User, error) {
 
 func (u *UserStorer) Create(user models.User) (models.User, error) {
 
-    stmt := `INSERT INTO users (name, surname, email)
-    VALUES ($1, $2, $3)`
+    stmt := `INSERT INTO users (name, surname, email, hashed_password)
+    VALUES ($1, $2, $3, $4)`
 
-    res, err := u.db.Exec(stmt, user.Name, user.Surname, user.Email)
+    res, err := u.db.Exec(stmt, user.Name, user.Surname, user.Email, user.HashedPassword)
 
     if err != nil {
         return models.User{}, err

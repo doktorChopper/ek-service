@@ -15,7 +15,7 @@ import (
 var flag bool
 
 type UserController struct {
-    store store.User
+    store store.UserStorer
 }
 
 // type UserCredHandler struct {
@@ -28,14 +28,14 @@ type UserController struct {
 //     }
 // }
 
-func NewUserController(user store.User) UserController {
+func NewUserController(user store.UserStorer) UserController {
     return UserController{
         store: user,
     }
 }
 
-func Home(w http.ResponseWriter, r* http.Request) {
-    flag = false
+
+func Home(w http.ResponseWriter, r *http.Request) {
     renderHomeTemplate(w)
 }
 
@@ -50,6 +50,52 @@ func renderHomeTemplate(w http.ResponseWriter) {
 
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+
+    t.Execute(w, nil)
+}
+
+func (u *UserController) Register(w http.ResponseWriter, r *http.Request) {
+
+    if r.Method == http.MethodGet {
+        u.RenderCreateRegisterForm(w, r)
+    } else if r.Method == http.MethodPost {
+        email := r.FormValue("email")
+        password := r.FormValue("password")
+        name := r.FormValue("name")
+        surname := r.FormValue("surname")
+
+        user := models.User {
+            Name:           name,
+            Surname:        surname,
+            Email:          email,
+            HashedPassword: password,
+        }
+
+        _, err := u.store.Create(user)
+        if err != nil {
+            w.WriteHeader(http.StatusInternalServerError)
+            return
+        }
+
+        http.Redirect(w, r, "/register", http.StatusSeeOther)
+    } else {
+        w.WriteHeader(http.StatusMethodNotAllowed)
+    }
+}
+
+func (u *UserController) RenderCreateRegisterForm(w http.ResponseWriter, r *http.Request) {
+
+    files := []string{
+        "templates/html/register.form.tmpl",
+        "templates/html/base.layout.tmpl",
+    }
+
+    t, err := template.ParseFiles(files...)
+
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
     }
 
     t.Execute(w, nil)
@@ -121,27 +167,6 @@ func (u *UserController) RenderCreateUserForm(w http.ResponseWriter, r *http.Req
     t.Execute(w, nil)
 }
 
-// func (u *UserCredHandler) Login(w http.ResponseWriter, r *http.Request) {
-//
-//     uc := models.UserCred{
-//         Login: r.FormValue("login"),
-//         Password: r.FormValue("password"),
-//     }
-//
-//     res, _ := u.store.Login(uc.Login)
-//
-//     fmt.Println(uc.Password)
-//     fmt.Println(res.HashedPassword)
-//
-//     if !comparePasswords(uc.Password, res.HashedPassword) {
-//         w.Write([]byte("ERROR"))
-//         return
-//     }
-//
-//     flag = true
-//     http.Redirect(w, r, "/home", http.StatusFound)
-// }
-
 func comparePasswords(formPass string, DBPass string) bool {
 
     for i := 0; i < max(len(formPass), len(DBPass)); i += 1 {
@@ -163,25 +188,3 @@ func Authorized(next http.HandlerFunc) http.HandlerFunc {
     }
 }
 
-// func (u *UserCredHandler) LoginForm(w http.ResponseWriter, r * http.Request) {
-//
-//     files := []string{
-//         "templates/html/login.page.tmpl",
-//         "templates/html/base.layout.tmpl",
-//     }
-//
-//     t, err := template.ParseFiles(files...)
-//     if err != nil {
-//         log.Println(err)
-//         return
-//     }
-//
-//     err = t.Execute(w, nil)
-//     if err != nil {
-//         log.Println(err)
-//         return
-//     }
-//
-// }
-//
-//
