@@ -1,28 +1,21 @@
 {{template "base" .}}
 {{define "title"}}Chopper{{end}}
 {{define "main"}}
-<div class="form-container">
+
+<div class="container">
     <h2>Добавить </h2>
     <form method='POST' action="/register">
-        <div class="form-style">
-            <label>Name</label><br>
-            <input type='text' name='name'/><br><br>
-        </div>
+        <label>Name</label><br>
+        <input type='text' id="name" name='name'/><br><br>
 
-        <div class="form-style">
-            <label>Surname</label><br>
-            <input type='text' name='surname'/><br><br>
-        </div>
+        <label>Surname</label><br>
+        <input type='text' name='surname'/><br><br>
 
-        <div class="form-style">
-            <label>Email</label><br>
-            <input type='text' name='email'/><br><br>
-        </div>
+        <label>Email</label><br>
+        <input type='email' id="email" name='email'/><br><br>
 
-        <div class="form-style">
-            <label>Password</label><br>
-            <input type='text' name='password'/><br><br>
-        </div>
+        <label>Password</label><br>
+        <input type='password' id="password" name='password'/><br><br>
 
         <input type='submit' name='отправить'/><br><br>
     </form>
