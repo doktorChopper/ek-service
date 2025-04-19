@@ -37,8 +37,8 @@ func (s *Server) RunServer() {
         Handler: mux,
     }
 
-    fs := http.FileServer(http.Dir("templates/static/"))
-    mux.Handle("/static/", http.StripPrefix("/static/", fs))
+    fs := http.FileServer(http.Dir("./templates/static/"))
+    mux.Handle("/static/", http.StripPrefix("/static", fs))
 
     log.Println("launching server...")
     err = srv.ListenAndServe()

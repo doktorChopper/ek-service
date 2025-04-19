@@ -42,17 +42,27 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
             return
         }
 
+        sessionID := uuid.NewString()
+        expiresAt := time.Now().Add(120 * time.Second)
+
         session := models.Session {
-            ID:         uuid.NewString(),
+            ID:         sessionID,
             UserID:     user.ID,
-            ExpiresAt:  time.Now().Add(120 * time.Second),
+            ExpiresAt:  expiresAt,
         }
 
         if err := a.session.Create(&session); err != nil {
             http.Error(w, "Failed to create session", http.StatusInternalServerError)
             return
         }
+
+        cookie := http.Cookie {
+            Name:       "session_token",
+            Value:      sessionID,
+            Expires:    expiresAt,
+        }
         
+        http.SetCookie(w, &cookie)
         http.Redirect(w, r, "/home", http.StatusSeeOther)
     }
 }

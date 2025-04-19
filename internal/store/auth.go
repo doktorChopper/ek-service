@@ -20,8 +20,6 @@ func NewAuthStore(u *UserStore) *AuthStore {
     }
 }
 
-// register new user
-
 func (a *AuthStore) Register(u *models.User) error {
 
     _, err := a.userStore.Create(u)

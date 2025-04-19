@@ -16,17 +16,19 @@ func NewSessionStore(db *sql.DB) *SessionStore {
     }
 }
 
-
-func (s *SessionStore) Get(sessionID int) (models.Session, error) {
+func (s *SessionStore) Get(sessionID string) (*models.Session, error) {
 
     var session models.Session
 
-    stmt := `SELECT * FROM sessions WHERE id = $1`
+    stmt := `SELECT id, user_id, expires_at FROM sessions WHERE id = $1`
     row := s.db.QueryRow(stmt, sessionID)
 
-    row.Scan(&session.ID, &session.UserID, &session.ExpiresAt)
+    err := row.Scan(&session.ID, &session.UserID, &session.ExpiresAt)
+    if err != nil {
+        return nil, err
+    }
 
-    return session, nil
+    return &session, nil
 }
 
 func (s *SessionStore) Delete(sessionID int) error {
