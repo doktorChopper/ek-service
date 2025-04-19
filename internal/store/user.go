@@ -2,22 +2,21 @@ package store
 
 import (
 	"database/sql"
-	// "log"
 
 	"github.com/doktorChopper/ek-service/internal/models"
 )
 
-type UserStorer struct {
+type UserStore struct {
     db *sql.DB
 }
 
-func NewUser(db *sql.DB) UserStorer {
-    return UserStorer{
+func NewUserStore(db *sql.DB) *UserStore {
+    return &UserStore{
         db: db,
     }
 } 
 
-func (u *UserStorer) ComparePassword(password, email string) bool {
+func (u *UserStore) ComparePassword(password, email string) bool {
 
     var checkPassword string
 
@@ -39,7 +38,23 @@ func (u *UserStorer) ComparePassword(password, email string) bool {
     return true
 }
 
-func (u *UserStorer) Get(id int) ([]models.User, error) {
+func (u *UserStore) FindByEmail(email string) (*models.User, error) {
+
+    var (
+        row     *sql.Row
+        user    models.User
+    )
+
+    stmt := `SELECT id, name, surname, email, hashed_password FROM users WHERE email = $1`
+    
+    row = u.db.QueryRow(stmt, email)
+    
+    row.Scan(&user.ID, &user.Name, &user.Surname, &user.Email, &user.Password)
+
+    return &user, nil
+}
+
+func (u *UserStore) Get(id int) ([]models.User, error) {
     
     var (
         rows    *sql.Rows
@@ -72,15 +87,15 @@ func (u *UserStorer) Get(id int) ([]models.User, error) {
 
 }
 
-func (u *UserStorer) Create(user models.User) (models.User, error) {
+func (u *UserStore) Create(user *models.User) (*models.User, error) {
 
     stmt := `INSERT INTO users (name, surname, email, hashed_password)
     VALUES ($1, $2, $3, $4)`
 
-    res, err := u.db.Exec(stmt, user.Name, user.Surname, user.Email, user.HashedPassword)
+    res, err := u.db.Exec(stmt, user.Name, user.Surname, user.Email, user.Password)
 
     if err != nil {
-        return models.User{}, err
+        return &models.User{}, err
     }
 
     id, _ := res.LastInsertId()

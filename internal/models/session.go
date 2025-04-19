@@ -7,18 +7,11 @@ import (
 )
 
 type Session struct {
-    SessionID   string
-    UserID      int
+    ID          string
+    UserID      int64
     ExpiresAt   time.Time
 }
 
-func (s *Session) SID() string {
-    return s.SessionID
-}
-
-func (s *Session) EAT() time.Time {
-    return s.ExpiresAt
-}
 
 func NewSession(userID int, expiresAfter time.Duration) *Session {
 
@@ -26,8 +19,8 @@ func NewSession(userID int, expiresAfter time.Duration) *Session {
     expiresAt := time.Now().Add(expiresAfter)
 
     session := &Session {
-        SessionID:  sessionID,
-        UserID:     userID,
+        ID:  sessionID,
+        UserID:     int64(userID),
         ExpiresAt:  expiresAt,
     }
 

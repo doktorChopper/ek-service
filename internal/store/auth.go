@@ -1,41 +1,49 @@
 package store
 
+import (
+	"errors"
 
-// import (
-// 	"database/sql"
-// 	"log"
-//
-// 	"github.com/doktorChopper/ek-service/internal/models"
-// )
-//
-// type UserCredStorer struct {
-//     db  *sql.DB
-// }
-//
-// func NewUserCredStorer(db *sql.DB) *UserCredStorer {
-//     return &UserCredStorer{
-//         db: db,
-//     }
-// }
-//
-// func (u *UserCredStorer) Login(login string) (models.User, error) {
-//
-//     var (
-//         row *sql.Row
-//         err error
-//     )
-//
-//     stmt := `SELECT hashed_password, login FROM users WHERE login = $1`
-//
-//     row = u.db.QueryRow(stmt, login)
-//
-//     var user models.User
-//
-//     err = row.Scan(&user.HashedPassword, &user.Login)
-//     log.Println(err)
-//
-//     return user, nil
-// }
-//
-//
-//
+	"github.com/doktorChopper/ek-service/internal/models"
+)
+
+var (
+    ErrInvalidCredentials = errors.New("invalid credentials")
+)
+
+type AuthStore struct {
+    userStore *UserStore
+}
+
+func NewAuthStore(u *UserStore) *AuthStore {
+    return &AuthStore {
+        userStore: u,
+    }
+}
+
+// register new user
+
+func (a *AuthStore) Register(u *models.User) error {
+
+    _, err := a.userStore.Create(u)
+
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (a *AuthStore) Login(email, password string) (*models.User, error) {
+
+    user, err := a.userStore.FindByEmail(email)
+    if err != nil {
+        return nil, ErrInvalidCredentials
+    }
+
+    if user.Password != password {
+        return nil, ErrInvalidCredentials
+    }
+
+    return user, nil
+}
+
