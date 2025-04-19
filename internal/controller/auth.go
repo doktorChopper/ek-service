@@ -43,7 +43,7 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
         }
 
         sessionID := uuid.NewString()
-        expiresAt := time.Now().Add(120 * time.Second)
+        expiresAt := time.Now().Add(600 * time.Second)
 
         session := models.Session {
             ID:         sessionID,
@@ -89,6 +89,25 @@ func (a *AuthController) Register(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, "/register", http.StatusSeeOther)
     } else {
         w.WriteHeader(http.StatusMethodNotAllowed)
+    }
+}
+
+func (a *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
+    
+    if r.Method == http.MethodGet {
+
+        cookie, err := r.Cookie("session_token")
+        if err != nil {
+            return
+        }
+
+        err = a.session.Delete(cookie.Value)
+        if err != nil {
+            return
+        }
+
+    } else {
+        w.WriteHeader(http.StatusBadRequest)
     }
 }
 

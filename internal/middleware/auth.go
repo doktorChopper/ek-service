@@ -17,17 +17,31 @@ func AuthMiddleware(s *store.SessionStore, next http.HandlerFunc) http.HandlerFu
         if err != nil {
             // http.Error(w, "No cookie", http.StatusInternalServerError)
             log.Println(err.Error())
+
             http.Redirect(w, r, "/login", http.StatusSeeOther)
             return
         }
 
-        _, err = s.Get(cookie.Value)
+        session, err := s.Get(cookie.Value)
         if err != nil {
             // http.Error(w, "No session", http.StatusInternalServerError)
             log.Println(err.Error())
+
             http.Redirect(w, r, "/login", http.StatusSeeOther)
             return
         }
+
+        if session.IsExpired() {
+            err = s.Delete(cookie.Value)
+            if err != nil {
+                w.WriteHeader(http.StatusInternalServerError)
+                return
+            }
+
+            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            return
+        }
+
 
         next.ServeHTTP(w, r)
     })

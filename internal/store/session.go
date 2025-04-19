@@ -31,7 +31,7 @@ func (s *SessionStore) Get(sessionID string) (*models.Session, error) {
     return &session, nil
 }
 
-func (s *SessionStore) Delete(sessionID int) error {
+func (s *SessionStore) Delete(sessionID string) error {
 
     stmt := `DELETE FROM sessions WHERE id = $1`
 
@@ -49,6 +49,18 @@ func (s *SessionStore) Create(session *models.Session) error {
     VALUES ($1, $2, $3)`
 
     _, err := s.db.Exec(stmt, &session.ID, &session.UserID, &session.ExpiresAt)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (s *SessionStore) GC() error {
+
+    stmt := `DELETE FROM sessions WHERE expires_at < Now() - INTERVAL 1 HOUR`
+
+    _, err := s.db.Exec(stmt)
     if err != nil {
         return err
     }

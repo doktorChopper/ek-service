@@ -29,6 +29,7 @@ func AddRouters(mux *http.ServeMux, db *sql.DB) {
 
     mux.HandleFunc("/register", middleware.LoggerMiddleware(authController, authController.Register))
     mux.HandleFunc("/login", middleware.LoggerMiddleware(authController, authController.Login))
+    mux.HandleFunc("/logout", middleware.LoggerMiddleware(authController, authController.Logout))
 
     // mux.HandleFunc("/user/{id}", userController.Get)
     mux.HandleFunc("/user/{id}", middleware.AuthMiddleware(sessionStore, userController.Get))

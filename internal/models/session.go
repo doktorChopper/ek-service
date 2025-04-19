@@ -27,6 +27,6 @@ type Session struct {
 //     return session
 // }
 //
-// func (s *Session) isExpired() bool {
-//     return s.ExpiresAt.Before(time.Now())
-// }
+func (s *Session) IsExpired() bool {
+    return s.ExpiresAt.Before(time.Now())
+}
