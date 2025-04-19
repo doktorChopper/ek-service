@@ -7,34 +7,41 @@ import (
 	"github.com/doktorChopper/ek-service/internal/controller"
 	"github.com/doktorChopper/ek-service/internal/middleware"
 	"github.com/doktorChopper/ek-service/internal/store"
+	"github.com/doktorChopper/ek-service/internal/views"
 )
+
+
 
 func AddRouters(mux *http.ServeMux, db *sql.DB) {
 
-    st := store.NewUser(db)
-    userHandler := controller.NewUserController(st)
+    st := store.NewUserStore(db)
+    userController := controller.NewUserController(st)
+
+    sessionStore := store.NewSessionStore(db)
+    authStore := store.NewAuthStore(st)
+
+    authController := controller.NewAuthController(sessionStore, authStore)
 
     // credStore := store.NewUserCredStorer(db)
     // credHandler := store.NewUserCredHandler(*credStore)
 
     // mux.HandleFunc("/home", controller.Authorized(controller.Home))
 
-    mux.HandleFunc("/register", userHandler.Register)
+    mux.HandleFunc("/register", middleware.LoggerMiddleware(authController, authController.Register))
+    mux.HandleFunc("/login", middleware.LoggerMiddleware(authController, authController.Login))
 
-    mux.HandleFunc("/login", middleware.RenderLoginForm)
-    mux.HandleFunc("/login/submit", middleware.LoginMiddleware(db, userHandler.RenderCreateUserForm))
-    mux.HandleFunc("/user/{id}", userHandler.Get)
-    mux.HandleFunc("/user/create", middleware.LoginMiddleware(db, userHandler.RenderCreateUserForm))
-    mux.HandleFunc("/user/create/submit", userHandler.CreateUser)
+    mux.HandleFunc("/user/{id}", userController.Get)
+    mux.HandleFunc("/user/create", middleware.AuthMiddleware(sessionStore, views.RenderCreateUserForm))
+    mux.HandleFunc("/user/create/submit", userController.CreateUser)
     // mux.HandleFunc("/login/submit", credHandler.Login)
     // mux.HandleFunc("/login", credHandler.LoginForm)
 
 
     store := store.NewFilm(db)
 
-    filmHandler := controller.NewFilmController(store)
+    filmController := controller.NewFilmController(store)
 
-    mux.HandleFunc("/user/{id}/films", filmHandler.GetFilms)
-    mux.HandleFunc("/user/{id}/film/add", filmHandler.RenderAddFilmForm)
-    mux.HandleFunc("/user/{id}/film/add/submit", filmHandler.AddFilm)
+    mux.HandleFunc("/user/{id}/films", filmController.GetFilms)
+    mux.HandleFunc("/user/{id}/film/add", filmController.RenderAddFilmForm)
+    mux.HandleFunc("/user/{id}/film/add/submit", filmController.AddFilm)
 }
