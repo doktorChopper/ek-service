@@ -57,7 +57,7 @@ func (f FilmStorer) AddFilmToUser(film models.Film) (models.Film, error) {
         film.Genre,
         film.Review,
         film.Rate,
-        film.UserId)
+        film.UserID)
 
     if err != nil {
         return models.Film{}, nil

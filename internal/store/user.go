@@ -48,42 +48,50 @@ func (u *UserStore) FindByEmail(email string) (*models.User, error) {
     stmt := `SELECT id, name, surname, email, hashed_password FROM users WHERE email = $1`
     
     row = u.db.QueryRow(stmt, email)
-    
-    row.Scan(&user.ID, &user.Name, &user.Surname, &user.Email, &user.Password)
-
-    return &user, nil
-}
-
-func (u *UserStore) Get(id int) ([]models.User, error) {
-    
-    var (
-        rows    *sql.Rows
-        err     error
-    )
-
-    stmt := `SELECT id, name, surname, email FROM users WHERE id = $1`
-
-    rows, err = u.db.Query(stmt, id)
-
+    err := row.Scan(&user.ID, &user.Name, &user.Surname, &user.Email, &user.Password)
     if err != nil {
         return nil, err
     }
 
-    var users []models.User
+    return &user, nil
+}
+
+
+func (u *UserStore) GetFilmsByUserID(id int) ([]*models.Film, error) {
+    
+    stmt := `SELECT films.id, films.name, films.genre, films.review, films.rate, films.user_id
+    FROM users INNER JOIN films ON users.id = films.user_id WHERE users.id = $1`
+
+    rows, err := u.db.Query(stmt, id)
+    if err != nil {
+        return nil, err
+    }
+
+    var films []*models.Film
 
     for rows.Next() {
-        var u models.User
+        var f models.Film
+        _ = rows.Scan(&f.ID, &f.Name, &f.Genre, &f.Review, &f.Rate, &f.UserID)
+        films = append(films, &f)
+    }
 
-        _ = rows.Scan(
-            &u.ID,
-            &u.Name,
-            &u.Surname,
-            &u.Email)
+    return films, nil
+}
 
-        users = append(users, u)
+func (u *UserStore) Get(id int) (*models.User, error) {
+    
+
+    stmt := `SELECT id, name, surname, email FROM users WHERE id = $1`
+
+    var user models.User
+
+    row := u.db.QueryRow(stmt, id)
+    err := row.Scan(&user.ID, &user.Name, &user.Surname, &user.Email)
+    if err != nil {
+        return nil, err
     }
     
-    return users, nil
+    return &user, nil
 
 }
 
@@ -93,13 +101,12 @@ func (u *UserStore) Create(user *models.User) (*models.User, error) {
     VALUES ($1, $2, $3, $4)`
 
     res, err := u.db.Exec(stmt, user.Name, user.Surname, user.Email, user.Password)
-
     if err != nil {
-        return &models.User{}, err
+        return nil, err
     }
 
     id, _ := res.LastInsertId()
-    user.ID = int64(id)
+    user.ID = int(id)
 
     return user, nil
 }

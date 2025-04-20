@@ -2,7 +2,11 @@ package views
 
 import (
 	"html/template"
+	"log"
 	"net/http"
+
+	"github.com/doktorChopper/ek-service/internal/models"
+	// "github.com/doktorChopper/ek-service/internal/models"
 )
 
 const (
@@ -12,7 +16,8 @@ const (
     REGISTER_FORM   string = "templates/html/register.form.tmpl"
     LOGIN_FORM      string = "templates/html/login.page.tmpl"
 )
-func RenderHomeTemplate(w http.ResponseWriter) {
+
+func RenderHomeTemplate(w http.ResponseWriter, r *http.Request, u *models.User) {
 
     files := []string{HOME, BASE}
 
@@ -20,9 +25,13 @@ func RenderHomeTemplate(w http.ResponseWriter) {
 
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
     }
 
-    t.Execute(w, nil)
+    err = t.Execute(w, u)
+    if err != nil {
+        log.Println(err)
+    }
 }
 
 func RenderLoginForm(w http.ResponseWriter, r *http.Request) {
