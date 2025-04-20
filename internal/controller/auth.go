@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/doktorChopper/ek-service/internal/models"
@@ -63,7 +64,7 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
         }
         
         http.SetCookie(w, &cookie)
-        http.Redirect(w, r, "/home", http.StatusSeeOther)
+        http.Redirect(w, r, "/id/" + strconv.Itoa(user.ID), http.StatusSeeOther)
     }
 }
 

@@ -26,8 +26,33 @@ func (u *UserController) LoggerName() string {
     return u.name
 }
 
-func Home(w http.ResponseWriter, r *http.Request) {
-    views.RenderHomeTemplate(w)
+func (u *UserController) Home(w http.ResponseWriter, r *http.Request) {
+
+    if r.Method == http.MethodGet {
+
+        userIDint, err := strconv.Atoi(r.URL.Path[len("/id/"):])
+        if err != nil {
+            return
+        }
+
+        user, err := u.store.Get(userIDint)
+        if err != nil {
+            w.WriteHeader(http.StatusInternalServerError)
+            return
+        }
+
+        films, err := u.store.GetFilmsByUserID(user.ID)
+        if err != nil {
+            w.WriteHeader(http.StatusInternalServerError)
+            return
+        }
+
+        user.Films = films
+
+        views.RenderHomeTemplate(w, r, user)
+    } else {
+        w.WriteHeader(http.StatusMethodNotAllowed)
+    }
 }
 
 func (u *UserController) Get(w http.ResponseWriter, r * http.Request) {

@@ -11,11 +11,11 @@ import (
 )
 
 type FilmController struct {
-    store store.FilmStorer
+    store *store.FilmStorer
 }
 
-func NewFilmController(store store.FilmStorer) FilmController {
-    return FilmController{
+func NewFilmController(store *store.FilmStorer) *FilmController {
+    return &FilmController{
         store: store,
     }
 }
@@ -68,7 +68,7 @@ func (f *FilmController) AddFilm(w http.ResponseWriter, r *http.Request) {
         Genre: r.FormValue("genre"),
         Review: r.FormValue("review"),
         Rate: int64(rate_checked),
-        UserId: int64(user_id_checked),
+        UserID: int64(user_id_checked),
     }
 
     _, err = f.store.AddFilmToUser(film)
@@ -84,9 +84,4 @@ func (f *FilmController) AddFilm(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, redirectUrl, http.StatusFound)
 
 }
-
-func (f *FilmController) RenderAddFilmForm(w http.ResponseWriter, r * http.Request) {
-    
-}
-
 
