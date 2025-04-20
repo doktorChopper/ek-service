@@ -1,6 +1,22 @@
 {{template "base" .}}
 {{define "title"}}Chopper{{end}}
 {{define "main"}}
-<h2>Тут что-то будет</h2>
-<p>Тут тоже что-то будет</p>
+    <h2>Домашняя страница</h2>
+    <p>Тут тоже что-то будет</p>
+    {{if .Films}}
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Жанр</th>
+        </tr>
+        {{range $key, $film := .Films}}
+        <tr>
+            <td>{{$film.Name}}</td>
+            <td>{{$film.Genre}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>Ничего нету ;-(</p>
+    {{end}}
 {{end}}
