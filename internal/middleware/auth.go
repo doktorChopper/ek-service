@@ -3,9 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
-	// "time"
 
-	// "github.com/doktorChopper/ek-service/internal/models"
 	"github.com/doktorChopper/ek-service/internal/store"
 )
 
@@ -18,7 +16,7 @@ func AuthMiddleware(s *store.SessionStore, next http.HandlerFunc) http.HandlerFu
             // http.Error(w, "No cookie", http.StatusInternalServerError)
             log.Println(err.Error())
 
-            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            http.Redirect(w, r, "/login", http.StatusUnauthorized)
             return
         }
 
@@ -27,14 +25,14 @@ func AuthMiddleware(s *store.SessionStore, next http.HandlerFunc) http.HandlerFu
             // http.Error(w, "No session", http.StatusInternalServerError)
             log.Println(err.Error())
 
-            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            http.Redirect(w, r, "/login", http.StatusUnauthorized)
             return
         }
 
         if session.IsExpired() {
             err = s.Delete(cookie.Value)
             if err != nil {
-                w.WriteHeader(http.StatusInternalServerError)
+                w.WriteHeader(http.StatusUnauthorized)
                 return
             }
 

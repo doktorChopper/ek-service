@@ -58,7 +58,7 @@ func (s *SessionStore) Create(session *models.Session) error {
 
 func (s *SessionStore) GC() error {
 
-    stmt := `DELETE FROM sessions WHERE expires_at < Now() - INTERVAL 1 HOUR`
+    stmt := `DELETE FROM sessions WHERE expires_at < Now()`
 
     _, err := s.db.Exec(stmt)
     if err != nil {
